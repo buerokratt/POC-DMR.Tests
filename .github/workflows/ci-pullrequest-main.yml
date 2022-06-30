@@ -1,0 +1,33 @@
+name: CentOps CI Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  BuildTest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: Dotnet Restore Tools
+      run: dotnet tool restore --tool-manifest "src/.config/dotnet-tools.json"
+        
+    - name: Dotnet Restore
+      run: dotnet restore src/*.sln
+        
+    - name: Dotnet Format
+      run: dotnet format src/*.sln --no-restore --verify-no-changes
+      
+    - name: Dotnet Build
+      run: dotnet build src/*.sln --no-restore
+      
+    - name: Dotnet Publish
+      working-directory: src
+      run: dotnet publish *.sln --no-restore
