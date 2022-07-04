@@ -1,0 +1,65 @@
+version: '3.4'
+
+services:
+  dmr:
+    build:
+      context: ./DMR/src/Dmr.Api
+      dockerfile: Dockerfile
+    ports:
+      - "9010:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - MOCKCENTOPS__CHATBOTS__0__ID=bot1
+      - MOCKCENTOPS__CHATBOTS__0__ENDPOINT=http://bot1/dmr-api/messages
+      - MOCKCENTOPS__CHATBOTS__1__ID=bot2
+      - MOCKCENTOPS__CHATBOTS__1__ENDPOINT=http://bot2/dmr-api/messages
+      - DMRSERVICESETTINGS__CLASSIFIERURI=http://classifier/dmr-api/messages
+      - DMRSERVICESETTINGS__CENTOPSURI=http://centops
+    networks:
+      - my-network
+
+  classifier:
+    build:
+      context: ./Mock-Classifier/src/MockClassifier.Api
+      dockerfile: Dockerfile
+    ports:
+      - "9011:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
+    networks:
+      - my-network
+
+  bot1:
+    build:
+      context: ./Mock-Bot/src/MockBot.Api
+      dockerfile: Dockerfile
+    ports:
+      - "9012:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
+      - BOTSETTINGS__ID=bot1
+    networks:
+      - my-network
+
+  bot2:
+    build:
+      context: ./Mock-Bot/src/MockBot.Api
+      dockerfile: Dockerfile
+    ports:
+      - "9013:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
+      - BOTSETTINGS__ID=bot2
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    external: true

@@ -3,3 +3,51 @@
 This repository is used to host integration tests and overall test artefacts that span all Bürokratt components.
 
 [![Tests CI Pipeline](https://github.com/buerokratt/Tests/actions/workflows/ci-pullrequest-main.yml/badge.svg)](https://github.com/buerokratt/Tests/actions/workflows/ci-pullrequest-main.yml)
+
+## Running tests locally
+
+As a developer, you may want to run the tests in this repository on your local machine. This is simple to do using Docker and Docker Compose.
+
+#### Clone repositories
+
+In order to run the tests in this repository, please clone each of the following repositories to a working folder (for example `c:\git\buerokratt`). We'll use the reference `[working folder`] to describe this location for the rest of the guide.
+
+1. Clone https://github.com/buerokratt/Mock-Bot to `[working folder]/Mock-Bot`
+2. Clone https://github.com/buerokratt/Mock-Classifier to `[working folder]/Mock-Classifier`
+3. Clone https://github.com/buerokratt/DMR to `[working folder]/DMR`
+4. Clone https://github.com/buerokratt/Tests to  `[working folder]/Tests`
+
+#### Install .net CLI
+
+The tests are written using .net so you need the .net CLI to run them.
+
+1. Install the .net 6.0 (or newer) CLI from [Install .NET on Windows, Linux, and macOS](https://docs.microsoft.com/en-us/dotnet/core/install/)
+
+#### Install Docker
+
+When running tests locally, you will use Docker Desktop.
+
+1. Install Docker Desktop from https://www.docker.com/products/docker-desktop/
+
+#### Docker Network Bridge
+
+In order to run the various services in containers concurrently, you will use Docker Compose. In order for the containers to be able to communicate with each other, you will create a Docker network bridge.
+
+1. Open a terminal and navigating to `[working folder]`
+2. Execute `docker network create -d bridge my-network`
+
+#### Docker Compose
+
+To run the containers, you will need a Docker Compose file
+
+1. Copy https://github.com/buerokratt/Tests/blob/main/docker-compose.yml to the root of `[working folder]`
+2. Open a terminal and navigate to `[working folder]`
+3. Execute `docker compose up --build` to build and run the containers specified in the `docker-compose.yml` file. This has competed when you see "created" next to each of the 4 containers and you see logs in the terminal
+
+#### Run Test
+
+You can run the test in a terminal or Visual Studio. These steps are for a terminal but you can get a more detailed view by running the tests in test Explorer in Visual Studio
+
+1. Open a terminal and navigate to `[working folder]/Tests/src/`
+2. Execute `dotnet test`
+3. If sucessfull, you will see that 1 test from "Tests.IntegrationTests.dll" has "Passed!" in the terminal.
