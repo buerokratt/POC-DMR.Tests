@@ -12,10 +12,10 @@ As a developer, you may want to run the tests in this repository on your local m
 
 In order to run the tests in this repository, please clone each of the following repositories to a working folder (for example `c:\git\buerokratt`). We'll use the reference `[working folder`] to describe this location for the rest of the guide.
 
-1. Clone https://github.com/buerokratt/Mock-Bot to `[working folder]/Mock-Bot`
-2. Clone https://github.com/buerokratt/Mock-Classifier to `[working folder]/Mock-Classifier`
-3. Clone https://github.com/buerokratt/DMR to `[working folder]/DMR`
-4. Clone https://github.com/buerokratt/Tests to  `[working folder]/Tests`
+1. Clone the `main` branch of https://github.com/buerokratt/Mock-Bot to `[working folder]/Mock-Bot`
+2. Clone the `main` branch of https://github.com/buerokratt/Mock-Classifier to `[working folder]/Mock-Classifier`
+3. Clone the `main` branch of https://github.com/buerokratt/DMR to `[working folder]/DMR`
+4. Clone the `main` branch of https://github.com/buerokratt/Tests to  `[working folder]/Tests`
 
 #### Install .net CLI
 
