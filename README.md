@@ -51,4 +51,4 @@ You can run the test in a terminal or Visual Studio. These steps are for a termi
 
 1. Open a terminal and navigate to `[working folder]/Tests/src/`
 2. Execute `dotnet test`
-3. If sucessfull, you will see that 1 test from "Tests.IntegrationTests.dll" has "Passed!" in the terminal.
+3. If sucessful, you will see that 1 test from "Tests.IntegrationTests.dll" has "Passed!" in the terminal.
