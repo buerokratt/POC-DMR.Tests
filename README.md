@@ -38,14 +38,16 @@ In order to run the various services in containers concurrently, you will use Do
 
 #### Docker Compose
 
-To run the containers, you will need a Docker Compose file
+To run the containers, you will need a Docker Compose file.
 
 1. Open a terminal and navigate cd to `[working folder]/Tests`
 3. Execute `docker compose up --build` to build and run the containers specified in the `docker-compose.yml` file. This has completed when you see "created" next to each of the 4 containers and you see logs in the terminal
 
 #### Run Test
 
-You can run the test in a terminal or Visual Studio. These steps are for a terminal but you can get a more detailed view by running the tests in test Explorer in Visual Studio
+You can run the test in a terminal or Visual Studio. These steps are for a terminal but you can get a more detailed view by running the tests in test Explorer in Visual Studio.
+
+> The test will use the version of the code which is on your local device for each repository/container. Generally, you'll want to make sure you have pulled the latest changes on the `main` branch before running the test, although there may be scenarios where you want to test from other branches.
 
 1. Open a terminal and navigate to `[working folder]/Tests/src/`
 2. Execute `dotnet test`
