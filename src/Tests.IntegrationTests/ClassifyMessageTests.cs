@@ -41,7 +41,7 @@ namespace Tests.IntegrationTests
                 resultChat = chats.First(c => c.Id == createdChat.Id);
                 if (resultChat.Messages.Count < 2)
                 {
-                    await Task.Delay(new TimeSpan(0, 0, 10)).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
                 }
                 else
                 {
