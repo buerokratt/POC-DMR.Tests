@@ -20,15 +20,14 @@ namespace Tests.IntegrationTests
         {
             // Arrange
             using var httpClient = new HttpClient();
-            var bot1Url = _configuration["Bot1Url"];
-            var chatsUri = new Uri($"{bot1Url}/client-api/chats");
+            var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
 
             // Act
             // 1 Create Chat
             var createdChat = await Request<Chat>(httpClient, Verb.Post, chatsUri).ConfigureAwait(false);
 
             // 2 Create Message
-            var chatMessageUri = new Uri($"{bot1Url}/client-api/chats/{createdChat.Id}/messages");
+            var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
             using var content = new StringContent("i want to register my child at school");
             var createdChatMessage = await Request<ChatMessage>(httpClient, Verb.Post, chatMessageUri, content).ConfigureAwait(false);
 
