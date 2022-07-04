@@ -42,7 +42,7 @@ To run the containers, you will need a Docker Compose file
 
 1. Copy https://github.com/buerokratt/Tests/blob/main/docker-compose.yml to the root of `[working folder]`
 2. Open a terminal and navigate to `[working folder]`
-3. Execute `docker compose up --build` to build and run the containers specified in the `docker-compose.yml` file. This has competed when you see "created" next to each of the 4 containers and you see logs in the terminal
+3. Execute `docker compose up --build` to build and run the containers specified in the `docker-compose.yml` file. This has completed when you see "created" next to each of the 4 containers and you see logs in the terminal
 
 #### Run Test
 
