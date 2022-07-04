@@ -40,8 +40,7 @@ In order to run the various services in containers concurrently, you will use Do
 
 To run the containers, you will need a Docker Compose file
 
-1. Copy https://github.com/buerokratt/Tests/blob/main/docker-compose.yml to the root of `[working folder]`
-2. Open a terminal and navigate to `[working folder]`
+1. Open a terminal and navigate cd to `[working folder]/Tests`
 3. Execute `docker compose up --build` to build and run the containers specified in the `docker-compose.yml` file. This has completed when you see "created" next to each of the 4 containers and you see logs in the terminal
 
 #### Run Test
@@ -50,4 +49,4 @@ You can run the test in a terminal or Visual Studio. These steps are for a termi
 
 1. Open a terminal and navigate to `[working folder]/Tests/src/`
 2. Execute `dotnet test`
-3. If sucessful, you will see that 1 test from "Tests.IntegrationTests.dll" has "Passed!" in the terminal.
+3. If sucessfull, you will see that 1 test from "Tests.IntegrationTests.dll" has "Passed!" in the terminal.
