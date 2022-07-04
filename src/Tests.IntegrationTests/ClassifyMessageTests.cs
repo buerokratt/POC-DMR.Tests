@@ -25,19 +25,19 @@ namespace Tests.IntegrationTests
 
             // Act
             // 1 Create Chat
-            var createdChat = await Request<Chat>(httpClient, Verb.Post, chatsUri).ConfigureAwait(false) as Chat;
+            var createdChat = await Request<Chat>(httpClient, Verb.Post, chatsUri).ConfigureAwait(false);
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{bot1Url}/client-api/chats/{createdChat.Id}/messages");
             using var content = new StringContent("i want to register my child at school");
-            var createdChatMessage = await Request<ChatMessage>(httpClient, Verb.Post, chatMessageUri, content).ConfigureAwait(false) as ChatMessage;
+            var createdChatMessage = await Request<ChatMessage>(httpClient, Verb.Post, chatMessageUri, content).ConfigureAwait(false);
 
             // 3 Retry until we have 2 messages in the chat that this test created
             Chat resultChat = null;
             bool breakLoop = false;
             while (!breakLoop)
             {
-                var chats = await Request<List<Chat>>(httpClient, Verb.Get, chatsUri).ConfigureAwait(false) as List<Chat>;
+                var chats = await Request<List<Chat>>(httpClient, Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
                 if (resultChat.Messages.Count < 2)
                 {
@@ -69,7 +69,7 @@ namespace Tests.IntegrationTests
         /// <param name="body">An optional body to send with the request with Post requests</param>
         /// <returns>Object representing deserialised result of type defined by T</returns>
         /// <exception cref="NotImplementedException">If verb is not in expected range.</exception>
-        private static async Task<object> Request<T>(HttpClient httpClient, Verb verb, Uri uri, StringContent body = null)
+        private static async Task<T> Request<T>(HttpClient httpClient, Verb verb, Uri uri, StringContent body = null)
         {
             var response = verb switch
             {
