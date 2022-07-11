@@ -8,11 +8,9 @@ namespace Tests.IntegrationTests
     {
         private readonly IConfiguration _configuration;
 
-        public ClassifyMessageTests()
+        public ClassifyMessageTests(IConfiguration configuration)
         {
-            _configuration = new ConfigurationBuilder()
-                .AddJsonFile(@"appsettings.json", false, false)
-                .Build();
+            _configuration = configuration;
         }
 
         [Fact(Timeout = 120000)]

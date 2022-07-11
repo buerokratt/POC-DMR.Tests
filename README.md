@@ -15,7 +15,8 @@ In order to run the tests in this repository, please clone each of the following
 1. Clone the `main` branch of https://github.com/buerokratt/Mock-Bot to `[working folder]/Mock-Bot`
 2. Clone the `main` branch of https://github.com/buerokratt/Mock-Classifier to `[working folder]/Mock-Classifier`
 3. Clone the `main` branch of https://github.com/buerokratt/DMR to `[working folder]/DMR`
-4. Clone the `main` branch of https://github.com/buerokratt/Tests to  `[working folder]/Tests`
+4. Clone the `main` branch of https://github.com/buerokratt/CentOps to  `[working folder]/CentOps`
+5. Clone the `main` branch of https://github.com/buerokratt/Tests to  `[working folder]/Tests`
 
 #### Install .net CLI
 
