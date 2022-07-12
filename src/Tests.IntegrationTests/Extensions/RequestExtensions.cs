@@ -3,9 +3,9 @@ using System.Text;
 using System.Text.Json;
 using Tests.IntegrationTests.Models;
 
-namespace Tests.IntegrationTests.Helpers
+namespace Tests.IntegrationTests.Extensions
 {
-    public static class RequestHelper
+    public static class RequestExtensions
     {
         /// <summary>
         /// Simple helper to handle http requests and deserialisation of result
@@ -16,7 +16,7 @@ namespace Tests.IntegrationTests.Helpers
         /// <param name="uri">The Uri to send the request to</param>
         /// <returns>Object representing deserialised result of type defined by T</returns>
         /// <exception cref="NotImplementedException">If verb is not in expected range.</exception>
-        public static async Task<T> Request<T>(HttpClient httpClient, Verb verb, Uri uri, string body = "")
+        public static async Task<T> Request<T>(this HttpClient httpClient, Verb verb, Uri uri, string body = "")
         {
             if (httpClient == null)
             {

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Tests.IntegrationTests.Fixtures;
-using Tests.IntegrationTests.Helpers;
 using Tests.IntegrationTests.Models;
+using Tests.IntegrationTests.Extensions;
 
 namespace Tests.IntegrationTests
 {
@@ -26,8 +26,8 @@ namespace Tests.IntegrationTests
             var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
             // Act
-            var participants = await RequestHelper.Request<List<Participant>>(_client, Verb.Get, participantsUri).ConfigureAwait(false);
-            var institutions = await RequestHelper.Request<List<Institution>>(_client, Verb.Get, institutionsUri).ConfigureAwait(false);
+            var participants = await _client.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
+            var institutions = await _client.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
 
             // Assert
             _ = Assert.Single(institutions);
@@ -44,18 +44,18 @@ namespace Tests.IntegrationTests
 
             // Act
             // 1 Create Chat
-            var createdChat = await RequestHelper.Request<Chat>(_client, Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            var createdChat = await _client.Request<Chat>(Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
-            var createdChatMessage = await RequestHelper.Request<ChatMessage>(_client, Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
+            var createdChatMessage = await _client.Request<ChatMessage>(Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
 
             // 3 Retry until we have 2 messages in the chat that this test created
             Chat resultChat = null;
             bool breakLoop = false;
             while (!breakLoop)
             {
-                var chats = await RequestHelper.Request<List<Chat>>(_client, Verb.Get, chatsUri).ConfigureAwait(false);
+                var chats = await _client.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
                 if (resultChat.Messages.Count < 2)
                 {

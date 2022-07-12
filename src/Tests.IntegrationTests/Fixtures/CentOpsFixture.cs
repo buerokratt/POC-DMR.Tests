@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
-using Tests.IntegrationTests.Helpers;
 using Tests.IntegrationTests.Models;
+using Tests.IntegrationTests.Extensions;
 
 namespace Tests.IntegrationTests.Fixtures
 {
@@ -31,7 +31,7 @@ namespace Tests.IntegrationTests.Fixtures
             {
                 Name = $"TestInstitution{_testId}",
             });
-            var institution = RequestHelper.Request<Institution>(_client, Verb.Post, _institutionsUri, institutionPostBody).Result;
+            var institution = _client.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
 
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new Participant()
@@ -43,7 +43,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            _ = RequestHelper.Request<Participant>(_client, Verb.Post, _participantsUri, dmrPostBody).Result;
+            _ = _client.Request<Participant>(Verb.Post, _participantsUri, dmrPostBody).Result;
 
             // Create Bot1
             var bot1PostBody = JsonSerializer.Serialize(new Participant()
@@ -55,7 +55,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            _ = RequestHelper.Request<Participant>(_client, Verb.Post, _participantsUri, bot1PostBody).Result;
+            _ = _client.Request<Participant>(Verb.Post, _participantsUri, bot1PostBody).Result;
         }
 
         public void Dispose()
@@ -63,20 +63,20 @@ namespace Tests.IntegrationTests.Fixtures
             // Do "global" teardown here; Only called once.
 
             // Get all participant for test id
-            var participants = RequestHelper.Request<List<Participant>>(_client, Verb.Get, _participantsUri).Result;
+            var participants = _client.Request<List<Participant>>(Verb.Get, _participantsUri).Result;
 
             // Delete each participant
             foreach (var participant in participants)
             {
                 var deleteParticipantUri = new Uri($"{_participantsUri}/{participant.Id}");
-                _ = RequestHelper.Request<List<Participant>>(_client, Verb.Delete, deleteParticipantUri).Result;
+                _ = _client.Request<List<Participant>>(Verb.Delete, deleteParticipantUri).Result;
             }
 
             // Delete institution
-            var institutions = RequestHelper.Request<List<Institution>>(_client, Verb.Get, _institutionsUri).Result;
+            var institutions = _client.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
             var testInstitution = institutions.FirstOrDefault(i => i.Name == $"TestInstitution{_testId}");
             var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
-            _ = RequestHelper.Request<List<Participant>>(_client, Verb.Delete, deleteInstitutionUri).Result;
+            _ = _client.Request<List<Participant>>(Verb.Delete, deleteInstitutionUri).Result;
 
             // Dispose
             _client.Dispose();
