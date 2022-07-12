@@ -2,7 +2,7 @@
 
 namespace Tests.IntegrationTests.Models
 {
-    public class InstitutionPost
+    public class InstitutionRequest
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }

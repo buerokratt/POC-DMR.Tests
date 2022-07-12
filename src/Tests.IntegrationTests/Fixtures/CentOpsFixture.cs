@@ -27,7 +27,7 @@ namespace Tests.IntegrationTests.Fixtures
             _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
             // Create Institution
-            var institutionPostBody = JsonSerializer.Serialize(new InstitutionPost()
+            var institutionPostBody = JsonSerializer.Serialize(new InstitutionRequest()
             {
                 Name = $"TestInstitution{_testId}",
             });
