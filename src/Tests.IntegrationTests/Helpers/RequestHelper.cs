@@ -17,15 +17,18 @@ namespace Tests.IntegrationTests.Helpers
         /// <param name="apiKey">The value to send as x-api-key header</param>
         /// <returns>Object representing deserialised result of type defined by T</returns>
         /// <exception cref="NotImplementedException">If verb is not in expected range.</exception>
-        public static async Task<T> Request<T>(HttpClient httpClient, Verb verb, Uri uri, string apikey, string body = null)
+        public static async Task<T> Request<T>(HttpClient httpClient, Verb verb, Uri uri, string apikey, string body = "")
         {
             if (httpClient == null)
             {
                 throw new ArgumentNullException(nameof(httpClient));
             }
 
-            // Add api key header
-            httpClient.DefaultRequestHeaders.Add("x-api-key", apikey);
+            // Add api key header unless it already exists
+            if (!httpClient.DefaultRequestHeaders.Contains("x-api-key"))
+            {
+                httpClient.DefaultRequestHeaders.Add("x-api-key", apikey);
+            }
 
             // Build content
             using var content = new StringContent(body, Encoding.UTF8, "application/json");

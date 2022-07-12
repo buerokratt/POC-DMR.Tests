@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Configuration;
+using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Helpers;
 using Tests.IntegrationTests.Models;
 
 namespace Tests.IntegrationTests
 {
-    public class ClassifyMessageTests : IClassFixture<Fixture>
+    public class ClassifyMessageTests : IClassFixture<CentOpsFixture>
     {
         private readonly IConfiguration _configuration;
 

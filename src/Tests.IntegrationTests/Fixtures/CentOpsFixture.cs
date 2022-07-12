@@ -4,14 +4,14 @@ using Microsoft.Extensions.Configuration;
 using Tests.IntegrationTests.Helpers;
 using Tests.IntegrationTests.Models;
 
-namespace Tests.IntegrationTests
+namespace Tests.IntegrationTests.Fixtures
 {
-    public sealed class Fixture : IDisposable
+    public sealed class CentOpsFixture : IDisposable
     {
         private readonly IConfiguration _configuration;
         private readonly string _testId;
 
-        public Fixture(IConfiguration configuration)
+        public CentOpsFixture(IConfiguration configuration)
         {
             // Do "global" initialization here; Only called once.
 
@@ -40,6 +40,18 @@ namespace Tests.IntegrationTests
                 ApiKey = "thisisareallylongkey"
             });
             var dmr = RequestHelper.Request<ParticipantPost>(httpClient, Verb.Post, participantsUri, _configuration["CentOpsApiKey"], dmrPostBody).Result;
+
+            // Create Bot1
+            var bot1PostBody = JsonSerializer.Serialize(new ParticipantPost()
+            {
+                Name = $"TestBot1{_testId}",
+                InstitutionId = institution.Id,
+                Host = "http://bot1/dmr-api/messages",
+                Type = "Chatbot",
+                Status = "Active",
+                ApiKey = "thisisareallylongkey"
+            });
+            var bot1 = RequestHelper.Request<ParticipantPost>(httpClient, Verb.Post, participantsUri, _configuration["CentOpsApiKey"], bot1PostBody).Result;
         }
 
         public void Dispose()
@@ -48,3 +60,4 @@ namespace Tests.IntegrationTests
         }
     }
 }
+

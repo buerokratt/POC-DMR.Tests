@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <None Remove="Helpers\" />
+    <None Remove="Fixtures\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
@@ -46,5 +47,6 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="Fixtures\" />
   </ItemGroup>
 </Project>
