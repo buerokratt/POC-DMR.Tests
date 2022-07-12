@@ -10,13 +10,13 @@ namespace Tests.IntegrationTests.Extensions
         /// <summary>
         /// Simple helper to handle http requests and deserialisation of result
         /// </summary>
-        /// <typeparam name="T">Type that the result should be deserialised to and returned</typeparam>
+        /// <typeparam name="TResponse">Type that the result should be deserialised to and returned</typeparam>
         /// <param name="httpClient">A HttpClient to use/reuse</param>
         /// <param name="verb">Which Http verb to use</param>
         /// <param name="uri">The Uri to send the request to</param>
         /// <returns>Object representing deserialised result of type defined by T</returns>
         /// <exception cref="NotImplementedException">If verb is not in expected range.</exception>
-        public static async Task<T> Request<T>(this HttpClient httpClient, Verb verb, Uri uri, string body = "")
+        public static async Task<TResponse> Request<TResponse>(this HttpClient httpClient, Verb verb, Uri uri, string body = "")
         {
             if (httpClient == null)
             {
@@ -39,11 +39,11 @@ namespace Tests.IntegrationTests.Extensions
             _ = response.EnsureSuccessStatusCode();
 
             // Deserialise response
-            T result = default;
+            TResponse result = default;
             if (response.StatusCode != HttpStatusCode.NoContent)
             {
                 var contentRaw = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                result = JsonSerializer.Deserialize<T>(contentRaw);
+                result = JsonSerializer.Deserialize<TResponse>(contentRaw);
             }
 
             return result;
