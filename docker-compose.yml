@@ -70,10 +70,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - COSMOSDB__ACCOUNT=
-      - COSMOSDB__KEY=
-      - COSMOSDB__DATABASENAME=cosmos
-      - COSMOSDB__CONTAINERNAME=participants
       - CONNECTIONSTRINGS__ADMINAPIKEY=testingadmin
       - FEATURETOGGLES__USEINMEMORYSTORE=true
     networks:
