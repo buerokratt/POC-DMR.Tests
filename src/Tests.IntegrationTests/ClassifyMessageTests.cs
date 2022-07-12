@@ -15,6 +15,26 @@ namespace Tests.IntegrationTests
         }
 
         [Fact(Timeout = 120000)]
+        public async Task EnvironmentIsConfigured()
+        {
+            // Arrange
+            using var httpClient = new HttpClient();
+            var institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
+            var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
+
+            // Act
+            var participants = await RequestHelper.Request<List<Participant>>(httpClient, Verb.Get, participantsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            var institutions = await RequestHelper.Request<List<Institution>>(httpClient, Verb.Get, institutionsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+
+            // Assert
+            _ = Assert.Single(institutions);
+            var institutionId = institutions.FirstOrDefault().Id;
+            Assert.Equal(2, participants.Count);
+            Assert.Equal(participants[0].InstitutionId, institutionId);
+            Assert.Equal(participants[1].InstitutionId, institutionId);
+        }
+
+        [Fact(Timeout = 120000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
             // Arrange
