@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.Json;
 using Tests.IntegrationTests.Models;
 
@@ -38,13 +39,21 @@ namespace Tests.IntegrationTests.Helpers
             {
                 Verb.Post => await httpClient.PostAsync(uri, content).ConfigureAwait(false),
                 Verb.Get => await httpClient.GetAsync(uri).ConfigureAwait(false),
+                Verb.Delete => await httpClient.DeleteAsync(uri).ConfigureAwait(false),
                 _ => throw new NotImplementedException(),
             };
 
-            // Process response
+            // Validate response
             _ = response.EnsureSuccessStatusCode();
-            var contentRaw = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var result = JsonSerializer.Deserialize<T>(contentRaw);
+
+            // Deserialise response
+            T result = default;
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                var contentRaw = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                result = JsonSerializer.Deserialize<T>(contentRaw);
+            }
+
             return result;
         }
     }

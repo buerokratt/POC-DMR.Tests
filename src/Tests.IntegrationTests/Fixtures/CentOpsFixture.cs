@@ -69,7 +69,8 @@ namespace Tests.IntegrationTests.Fixtures
             // Delete each participant
             foreach (var participant in participants)
             {
-                _ = participant.Id;
+                var deleteParticipanturi = new Uri($"{_participantsUri}/{participant.Id}");
+                _ = RequestHelper.Request<List<Participant>>(httpClient, Verb.Delete, deleteParticipanturi, _configuration["CentOpsApiKey"]).Result;
             }
 
             // Delete institution
