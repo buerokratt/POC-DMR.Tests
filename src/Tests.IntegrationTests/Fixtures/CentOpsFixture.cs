@@ -32,7 +32,7 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new ParticipantPost()
             {
-                Name = $"TestDmr{_testId}",
+                Name = "dmr1",
                 InstitutionId = institution.Id,
                 Host = "http://dmr/messages",
                 Type = "Dmr",
@@ -44,7 +44,7 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Bot1
             var bot1PostBody = JsonSerializer.Serialize(new ParticipantPost()
             {
-                Name = $"TestBot1{_testId}",
+                Name = "bot1",
                 InstitutionId = institution.Id,
                 Host = "http://bot1/dmr-api/messages",
                 Type = "Chatbot",
