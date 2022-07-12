@@ -12,6 +12,7 @@ namespace Tests.IntegrationTests.Fixtures
         private readonly string _testId;
         private readonly Uri _institutionsUri;
         private readonly Uri _participantsUri;
+        private readonly HttpClient _client;
 
         public CentOpsFixture(IConfiguration configuration)
         {
@@ -20,7 +21,8 @@ namespace Tests.IntegrationTests.Fixtures
             // Setup
             _configuration = configuration;
             _testId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
-            using var httpClient = new HttpClient();
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
             _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
             _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
@@ -29,7 +31,7 @@ namespace Tests.IntegrationTests.Fixtures
             {
                 Name = $"TestInstitution{_testId}",
             });
-            var institution = RequestHelper.Request<Institution>(httpClient, Verb.Post, _institutionsUri, _configuration["CentOpsApiKey"], institutionPostBody).Result;
+            var institution = RequestHelper.Request<Institution>(_client, Verb.Post, _institutionsUri, institutionPostBody).Result;
 
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new Participant()
@@ -41,7 +43,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            var dmr = RequestHelper.Request<Participant>(httpClient, Verb.Post, _participantsUri, _configuration["CentOpsApiKey"], dmrPostBody).Result;
+            _ = RequestHelper.Request<Participant>(_client, Verb.Post, _participantsUri, dmrPostBody).Result;
 
             // Create Bot1
             var bot1PostBody = JsonSerializer.Serialize(new Participant()
@@ -53,31 +55,31 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            var bot1 = RequestHelper.Request<Participant>(httpClient, Verb.Post, _participantsUri, _configuration["CentOpsApiKey"], bot1PostBody).Result;
+            _ = RequestHelper.Request<Participant>(_client, Verb.Post, _participantsUri, bot1PostBody).Result;
         }
 
         public void Dispose()
         {
             // Do "global" teardown here; Only called once.
 
-            // Setup
-            using var httpClient = new HttpClient();
-
             // Get all participant for test id
-            var participants = RequestHelper.Request<List<Participant>>(httpClient, Verb.Get, _participantsUri, _configuration["CentOpsApiKey"]).Result;
+            var participants = RequestHelper.Request<List<Participant>>(_client, Verb.Get, _participantsUri).Result;
 
             // Delete each participant
             foreach (var participant in participants)
             {
                 var deleteParticipantUri = new Uri($"{_participantsUri}/{participant.Id}");
-                _ = RequestHelper.Request<List<Participant>>(httpClient, Verb.Delete, deleteParticipantUri, _configuration["CentOpsApiKey"]).Result;
+                _ = RequestHelper.Request<List<Participant>>(_client, Verb.Delete, deleteParticipantUri).Result;
             }
 
             // Delete institution
-            var institutions = RequestHelper.Request<List<Institution>>(httpClient, Verb.Get, _institutionsUri, _configuration["CentOpsApiKey"]).Result;
+            var institutions = RequestHelper.Request<List<Institution>>(_client, Verb.Get, _institutionsUri).Result;
             var testInstitution = institutions.FirstOrDefault(i => i.Name == $"TestInstitution{_testId}");
             var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
-            _ = RequestHelper.Request<List<Participant>>(httpClient, Verb.Delete, deleteInstitutionUri, _configuration["CentOpsApiKey"]).Result;
+            _ = RequestHelper.Request<List<Participant>>(_client, Verb.Delete, deleteInstitutionUri).Result;
+
+            // Dispose
+            _client.Dispose();
         }
     }
 }

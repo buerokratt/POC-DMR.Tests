@@ -5,26 +5,29 @@ using Tests.IntegrationTests.Models;
 
 namespace Tests.IntegrationTests
 {
-    public class ClassifyMessageTests : IClassFixture<CentOpsFixture>
+    public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>, IDisposable
     {
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _client;
 
         public ClassifyMessageTests(IConfiguration configuration)
         {
             _configuration = configuration;
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
+
         }
 
         [Fact(Timeout = 120000)]
         public async Task EnvironmentIsConfigured()
         {
             // Arrange
-            using var httpClient = new HttpClient();
             var institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
             var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
             // Act
-            var participants = await RequestHelper.Request<List<Participant>>(httpClient, Verb.Get, participantsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
-            var institutions = await RequestHelper.Request<List<Institution>>(httpClient, Verb.Get, institutionsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            var participants = await RequestHelper.Request<List<Participant>>(_client, Verb.Get, participantsUri).ConfigureAwait(false);
+            var institutions = await RequestHelper.Request<List<Institution>>(_client, Verb.Get, institutionsUri).ConfigureAwait(false);
 
             // Assert
             _ = Assert.Single(institutions);
@@ -37,23 +40,22 @@ namespace Tests.IntegrationTests
         public async Task GivenValidMessageReceivesValidResponse()
         {
             // Arrange
-            using var httpClient = new HttpClient();
             var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
 
             // Act
             // 1 Create Chat
-            var createdChat = await RequestHelper.Request<Chat>(httpClient, Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            var createdChat = await RequestHelper.Request<Chat>(_client, Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
-            var createdChatMessage = await RequestHelper.Request<ChatMessage>(httpClient, Verb.Post, chatMessageUri, _configuration["CentOpsApiKey"], "i want to register my child at school").ConfigureAwait(false);
+            var createdChatMessage = await RequestHelper.Request<ChatMessage>(_client, Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
 
             // 3 Retry until we have 2 messages in the chat that this test created
             Chat resultChat = null;
             bool breakLoop = false;
             while (!breakLoop)
             {
-                var chats = await RequestHelper.Request<List<Chat>>(httpClient, Verb.Get, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+                var chats = await RequestHelper.Request<List<Chat>>(_client, Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
                 if (resultChat.Messages.Count < 2)
                 {
@@ -73,6 +75,11 @@ namespace Tests.IntegrationTests
             Assert.Equal("CLASSIFIER", dmrMessage.SentBy.ToUpperInvariant());
             Assert.Equal("EDUCATION", dmrMessage.Classification.ToUpperInvariant());
             Assert.Equal(createdChatMessage.Content, dmrMessage.Content);
+        }
+
+        public void Dispose()
+        {
+            _client.Dispose();
         }
     }
 }
