@@ -10,6 +10,8 @@ namespace Tests.IntegrationTests.Fixtures
     {
         private readonly IConfiguration _configuration;
         private readonly string _testId;
+        private readonly Uri _institutionsUri;
+        private readonly Uri _participantsUri;
 
         public CentOpsFixture(IConfiguration configuration)
         {
@@ -19,18 +21,18 @@ namespace Tests.IntegrationTests.Fixtures
             _configuration = configuration;
             _testId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
             using var httpClient = new HttpClient();
-            var institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
-            var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
+            _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
+            _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
             // Create Institution
             var institutionPostBody = JsonSerializer.Serialize(new InstitutionPost()
             {
                 Name = $"TestInstitution{_testId}",
             });
-            var institution = RequestHelper.Request<Institution>(httpClient, Verb.Post, institutionsUri, _configuration["CentOpsApiKey"], institutionPostBody).Result;
+            var institution = RequestHelper.Request<Institution>(httpClient, Verb.Post, _institutionsUri, _configuration["CentOpsApiKey"], institutionPostBody).Result;
 
             // Create Dmr
-            var dmrPostBody = JsonSerializer.Serialize(new ParticipantPost()
+            var dmrPostBody = JsonSerializer.Serialize(new Participant()
             {
                 Name = "dmr1",
                 InstitutionId = institution.Id,
@@ -39,10 +41,10 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            var dmr = RequestHelper.Request<ParticipantPost>(httpClient, Verb.Post, participantsUri, _configuration["CentOpsApiKey"], dmrPostBody).Result;
+            var dmr = RequestHelper.Request<Participant>(httpClient, Verb.Post, _participantsUri, _configuration["CentOpsApiKey"], dmrPostBody).Result;
 
             // Create Bot1
-            var bot1PostBody = JsonSerializer.Serialize(new ParticipantPost()
+            var bot1PostBody = JsonSerializer.Serialize(new Participant()
             {
                 Name = "bot1",
                 InstitutionId = institution.Id,
@@ -51,12 +53,26 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            var bot1 = RequestHelper.Request<ParticipantPost>(httpClient, Verb.Post, participantsUri, _configuration["CentOpsApiKey"], bot1PostBody).Result;
+            var bot1 = RequestHelper.Request<Participant>(httpClient, Verb.Post, _participantsUri, _configuration["CentOpsApiKey"], bot1PostBody).Result;
         }
 
         public void Dispose()
         {
             // Do "global" teardown here; Only called once.
+
+            // Setup
+            using var httpClient = new HttpClient();
+
+            // Get all participant for test id
+            var participants = RequestHelper.Request<List<Participant>>(httpClient, Verb.Get, _participantsUri, _configuration["CentOpsApiKey"]).Result;
+
+            // Delete each participant
+            foreach (var participant in participants)
+            {
+                _ = participant.Id;
+            }
+
+            // Delete institution
         }
     }
 }

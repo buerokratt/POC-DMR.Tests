@@ -2,7 +2,7 @@
 
 namespace Tests.IntegrationTests.Models
 {
-    public class ParticipantPost
+    public class Participant
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }
