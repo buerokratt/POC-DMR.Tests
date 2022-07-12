@@ -10,7 +10,7 @@ namespace Tests.IntegrationTests.Helpers
         /// <summary>
         /// Simple helper to handle http requests and deserialisation of result
         /// </summary>
-        /// <typeparam name="T">Type that the result shoudl be deserialised to</typeparam>
+        /// <typeparam name="T">Type that the result should be deserialised to and returned</typeparam>
         /// <param name="httpClient">A HttpClient to use/reuse</param>
         /// <param name="verb">Which Http verb to use</param>
         /// <param name="uri">The Uri to send the request to</param>
