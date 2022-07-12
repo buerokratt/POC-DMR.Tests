@@ -28,10 +28,9 @@ namespace Tests.IntegrationTests
 
             // Assert
             _ = Assert.Single(institutions);
-            var institutionId = institutions.FirstOrDefault().Id;
             Assert.Equal(2, participants.Count);
-            Assert.Equal(participants[0].InstitutionId, institutionId);
-            Assert.Equal(participants[1].InstitutionId, institutionId);
+            Assert.Equal(participants[0].InstitutionId, institutions.Single().Id);
+            Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
         }
 
         [Fact(Timeout = 120000)]
