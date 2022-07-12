@@ -1,40 +1,61 @@
 using Microsoft.Extensions.Configuration;
-using System.Text.Json;
+using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
+using Tests.IntegrationTests.Extensions;
 
 namespace Tests.IntegrationTests
 {
-    public class ClassifyMessageTests
+    public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>, IDisposable
     {
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _client;
 
         public ClassifyMessageTests(IConfiguration configuration)
         {
             _configuration = configuration;
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
+
+        }
+
+        [Fact(Timeout = 120000)]
+        public async Task EnvironmentIsConfigured()
+        {
+            // Arrange
+            var institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
+            var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
+
+            // Act
+            var participants = await _client.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
+            var institutions = await _client.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
+
+            // Assert
+            _ = Assert.Single(institutions);
+            Assert.Equal(2, participants.Count);
+            Assert.Equal(participants[0].InstitutionId, institutions.Single().Id);
+            Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
         }
 
         [Fact(Timeout = 120000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
             // Arrange
-            using var httpClient = new HttpClient();
             var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
 
             // Act
             // 1 Create Chat
-            var createdChat = await Request<Chat>(httpClient, Verb.Post, chatsUri).ConfigureAwait(false);
+            var createdChat = await _client.Request<Chat>(Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
-            using var content = new StringContent("i want to register my child at school");
-            var createdChatMessage = await Request<ChatMessage>(httpClient, Verb.Post, chatMessageUri, content).ConfigureAwait(false);
+            var createdChatMessage = await _client.Request<ChatMessage>(Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
 
             // 3 Retry until we have 2 messages in the chat that this test created
             Chat resultChat = null;
             bool breakLoop = false;
             while (!breakLoop)
             {
-                var chats = await Request<List<Chat>>(httpClient, Verb.Get, chatsUri).ConfigureAwait(false);
+                var chats = await _client.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
                 if (resultChat.Messages.Count < 2)
                 {
@@ -56,28 +77,9 @@ namespace Tests.IntegrationTests
             Assert.Equal(createdChatMessage.Content, dmrMessage.Content);
         }
 
-        /// <summary>
-        /// Simple helper to handle http requests and deserialisation of result
-        /// </summary>
-        /// <typeparam name="T">Type that the result shoudl be deserialised to</typeparam>
-        /// <param name="httpClient">A HttpClient to use/reuse</param>
-        /// <param name="verb">Which Http verb to use</param>
-        /// <param name="uri">The Uri to send the request to</param>
-        /// <param name="body">An optional body to send with the request with Post requests</param>
-        /// <returns>Object representing deserialised result of type defined by T</returns>
-        /// <exception cref="NotImplementedException">If verb is not in expected range.</exception>
-        private static async Task<T> Request<T>(HttpClient httpClient, Verb verb, Uri uri, StringContent body = null)
+        public void Dispose()
         {
-            var response = verb switch
-            {
-                Verb.Post => await httpClient.PostAsync(uri, body).ConfigureAwait(false),
-                Verb.Get => await httpClient.GetAsync(uri).ConfigureAwait(false),
-                _ => throw new NotImplementedException(),
-            };
-            _ = response.EnsureSuccessStatusCode();
-            var contentRaw = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var result = JsonSerializer.Deserialize<T>(contentRaw);
-            return result;
+            _client.Dispose();
         }
     }
 }

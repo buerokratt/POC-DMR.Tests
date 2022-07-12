@@ -16,6 +16,7 @@ services:
       - MOCKCENTOPS__CHATBOTS__1__ENDPOINT=http://bot2/dmr-api/messages
       - DMRSERVICESETTINGS__CLASSIFIERURI=http://classifier/dmr-api/messages
       - DMRSERVICESETTINGS__CENTOPSURI=http://centops
+      - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkey
     networks:
       - my-network
 
@@ -57,6 +58,20 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
       - BOTSETTINGS__ID=bot2
+    networks:
+      - my-network
+
+  centops:
+    build:
+      context: ../CentOps/src
+      dockerfile: ./CentOps.Api/Dockerfile
+    ports:
+      - "9014:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - CONNECTIONSTRINGS__ADMINAPIKEY=testingadmin
+      - FEATURETOGGLES__USEINMEMORYSTORE=true
     networks:
       - my-network
 

@@ -36,9 +36,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Fixtures\" />
+    <None Remove="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Fixtures\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
 </Project>
