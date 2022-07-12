@@ -69,11 +69,15 @@ namespace Tests.IntegrationTests.Fixtures
             // Delete each participant
             foreach (var participant in participants)
             {
-                var deleteParticipanturi = new Uri($"{_participantsUri}/{participant.Id}");
-                _ = RequestHelper.Request<List<Participant>>(httpClient, Verb.Delete, deleteParticipanturi, _configuration["CentOpsApiKey"]).Result;
+                var deleteParticipantUri = new Uri($"{_participantsUri}/{participant.Id}");
+                _ = RequestHelper.Request<List<Participant>>(httpClient, Verb.Delete, deleteParticipantUri, _configuration["CentOpsApiKey"]).Result;
             }
 
             // Delete institution
+            var institutions = RequestHelper.Request<List<Institution>>(httpClient, Verb.Get, _institutionsUri, _configuration["CentOpsApiKey"]).Result;
+            var testInstitution = institutions.FirstOrDefault(i => i.Name == $"TestInstitution{_testId}");
+            var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
+            _ = RequestHelper.Request<List<Participant>>(httpClient, Verb.Delete, deleteInstitutionUri, _configuration["CentOpsApiKey"]).Result;
         }
     }
 }
