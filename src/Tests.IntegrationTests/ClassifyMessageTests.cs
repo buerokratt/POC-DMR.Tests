@@ -65,7 +65,7 @@ namespace Tests.IntegrationTests
             {
                 var chats = await _client.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
-                _output.WriteLine($"cresultChat.Messages.Count= {resultChat.Messages.Count}");
+                _output.WriteLine($"resultChat.Messages.Count= {resultChat.Messages.Count}");
 
                 if (resultChat.Messages.Count < 2)
                 {
