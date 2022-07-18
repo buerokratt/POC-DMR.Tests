@@ -34,7 +34,7 @@ namespace Tests.IntegrationTests
 
             // Assert
             _ = Assert.Single(institutions);
-            Assert.Equal(2, participants.Count);
+            Assert.Equal(3, participants.Count);
             Assert.Equal(participants[0].InstitutionId, institutions.Single().Id);
             Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
         }
