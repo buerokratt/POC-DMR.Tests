@@ -18,10 +18,9 @@ namespace Tests.IntegrationTests
             _output = output;
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
-
         }
 
-        [Fact(Timeout = 120000)]
+        [Fact(Timeout = 2 * 60 * 1000)]
         public async Task EnvironmentIsConfigured()
         {
             // Arrange
@@ -39,7 +38,7 @@ namespace Tests.IntegrationTests
             Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
         }
 
-        [Fact(Timeout = 120000)]
+        [Fact(Timeout = 4 * 60 * 1000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
             _output.WriteLine($"Starting {nameof(GivenValidMessageReceivesValidResponse)}");
