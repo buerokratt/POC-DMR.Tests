@@ -10,11 +10,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - MOCKCENTOPS__CHATBOTS__0__ID=bot1
-      - MOCKCENTOPS__CHATBOTS__0__ENDPOINT=http://bot1/dmr-api/messages
-      - MOCKCENTOPS__CHATBOTS__1__ID=bot2
-      - MOCKCENTOPS__CHATBOTS__1__ENDPOINT=http://bot2/dmr-api/messages
-      - DMRSERVICESETTINGS__CLASSIFIERURI=http://classifier/dmr-api/messages
       - DMRSERVICESETTINGS__CENTOPSURI=http://centops
       - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkey
     networks:

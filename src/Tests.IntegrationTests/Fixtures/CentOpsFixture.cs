@@ -33,6 +33,19 @@ namespace Tests.IntegrationTests.Fixtures
             });
             var institution = _client.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
 
+
+            // Create Classifier
+            var classifierPostBody = JsonSerializer.Serialize(new Participant()
+            {
+                Name = "classifier1",
+                InstitutionId = institution.Id,
+                Host = "http://classifier/dmr-api/messages",
+                Type = "Classifier",
+                Status = "Active",
+                ApiKey = "thisisareallylongkey"
+            });
+            _ = _client.Request<Participant>(Verb.Post, _participantsUri, classifierPostBody).Result;
+
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new Participant()
             {

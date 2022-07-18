@@ -2,17 +2,20 @@ using Microsoft.Extensions.Configuration;
 using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
 using Tests.IntegrationTests.Extensions;
+using Xunit.Abstractions;
 
 namespace Tests.IntegrationTests
 {
     public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>, IDisposable
     {
+        private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
 
-        public ClassifyMessageTests(IConfiguration configuration)
+        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output)
         {
             _configuration = configuration;
+            _output = output;
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
 
@@ -31,7 +34,7 @@ namespace Tests.IntegrationTests
 
             // Assert
             _ = Assert.Single(institutions);
-            Assert.Equal(2, participants.Count);
+            Assert.Equal(3, participants.Count);
             Assert.Equal(participants[0].InstitutionId, institutions.Single().Id);
             Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
         }
@@ -39,16 +42,21 @@ namespace Tests.IntegrationTests
         [Fact(Timeout = 120000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
+            _output.WriteLine($"Starting {nameof(GivenValidMessageReceivesValidResponse)}");
+
             // Arrange
             var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
+            _output.WriteLine($"chatsUri = {chatsUri}");
 
             // Act
             // 1 Create Chat
             var createdChat = await _client.Request<Chat>(Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            _output.WriteLine($"createdChat.Id = {createdChat.Id}");
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
             var createdChatMessage = await _client.Request<ChatMessage>(Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
+            _output.WriteLine($"createdChatMessage.Id = {createdChatMessage.Id}");
 
             // 3 Retry until we have 2 messages in the chat that this test created
             Chat resultChat = null;
@@ -57,6 +65,8 @@ namespace Tests.IntegrationTests
             {
                 var chats = await _client.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
+                _output.WriteLine($"resultChat.Messages.Count= {resultChat.Messages.Count}");
+
                 if (resultChat.Messages.Count < 2)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
@@ -69,6 +79,7 @@ namespace Tests.IntegrationTests
 
             // Determine the newest message (assume this is from Dmr)
             var dmrMessage = resultChat.Messages.OrderByDescending(c => c.CreatedAt).First();
+            _output.WriteLine($"dmrMessage.id = {dmrMessage.Id}");
 
             // Assert
             Assert.Equal(2, resultChat.Messages.Count);
