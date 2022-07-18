@@ -42,7 +42,7 @@ namespace Tests.IntegrationTests
         [Fact(Timeout = 120000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
-            _output.WriteLine("Starting GivenValidMessageReceivesValidResponse");
+            _output.WriteLine($"Starting {nameof(GivenValidMessageReceivesValidResponse)}");
 
             // Arrange
             var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
