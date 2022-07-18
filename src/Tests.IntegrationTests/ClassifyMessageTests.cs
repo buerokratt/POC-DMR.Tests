@@ -39,7 +39,7 @@ namespace Tests.IntegrationTests
             Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
         }
 
-        [Fact(Timeout = 120000)]
+        [Fact(Timeout = 240000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
             _output.WriteLine($"Starting {nameof(GivenValidMessageReceivesValidResponse)}");
