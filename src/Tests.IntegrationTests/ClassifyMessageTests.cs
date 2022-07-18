@@ -2,17 +2,21 @@ using Microsoft.Extensions.Configuration;
 using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
 using Tests.IntegrationTests.Extensions;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
 
 namespace Tests.IntegrationTests
 {
     public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>, IDisposable
     {
+        private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
 
-        public ClassifyMessageTests(IConfiguration configuration)
+        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output)
         {
             _configuration = configuration;
+            _output = output;
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
 
@@ -39,8 +43,11 @@ namespace Tests.IntegrationTests
         [Fact(Timeout = 120000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
+            _output.WriteLine("Starting GivenValidMessageReceivesValidResponse");
+
             // Arrange
             var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
+            _output.WriteLine($"chatsuri = {chatsUri}");
 
             // Act
             // 1 Create Chat
@@ -69,6 +76,9 @@ namespace Tests.IntegrationTests
 
             // Determine the newest message (assume this is from Dmr)
             var dmrMessage = resultChat.Messages.OrderByDescending(c => c.CreatedAt).First();
+
+
+            _output.WriteLine($"resultChat = {resultChat}");
 
             // Assert
             Assert.Equal(2, resultChat.Messages.Count);
