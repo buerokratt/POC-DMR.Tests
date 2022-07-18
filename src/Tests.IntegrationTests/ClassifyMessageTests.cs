@@ -46,7 +46,7 @@ namespace Tests.IntegrationTests
 
             // Arrange
             var chatsUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats");
-            _output.WriteLine($"chatsuri = {chatsUri}");
+            _output.WriteLine($"chatsUri = {chatsUri}");
 
             // Act
             // 1 Create Chat
