@@ -51,10 +51,12 @@ namespace Tests.IntegrationTests
             // Act
             // 1 Create Chat
             var createdChat = await _client.Request<Chat>(Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            _output.WriteLine($"createdChat.Id = {createdChat.Id}");
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
             var createdChatMessage = await _client.Request<ChatMessage>(Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
+            _output.WriteLine($"createdChatMessage.Id = {createdChatMessage.Id}");
 
             // 3 Retry until we have 2 messages in the chat that this test created
             Chat resultChat = null;
@@ -63,6 +65,8 @@ namespace Tests.IntegrationTests
             {
                 var chats = await _client.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
+                _output.WriteLine($"cresultChat.Messages.Count= {resultChat.Messages.Count}");
+
                 if (resultChat.Messages.Count < 2)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
