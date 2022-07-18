@@ -79,9 +79,7 @@ namespace Tests.IntegrationTests
 
             // Determine the newest message (assume this is from Dmr)
             var dmrMessage = resultChat.Messages.OrderByDescending(c => c.CreatedAt).First();
-
-
-            _output.WriteLine($"resultChat = {resultChat}");
+            _output.WriteLine($"dmrMessage.id = {dmrMessage.Id}");
 
             // Assert
             Assert.Equal(2, resultChat.Messages.Count);
