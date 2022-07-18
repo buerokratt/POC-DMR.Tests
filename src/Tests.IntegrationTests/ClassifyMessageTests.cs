@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
 using Tests.IntegrationTests.Extensions;
-using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace Tests.IntegrationTests
