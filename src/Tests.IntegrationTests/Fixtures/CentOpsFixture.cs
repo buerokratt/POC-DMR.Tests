@@ -42,7 +42,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Host = "http://classifier/dmr-api/messages",
                 Type = "Classifier",
                 Status = "Active",
-                ApiKey = "thisisareallylongkey"
+                ApiKey = "thisisareallylongkeyforclassifier"
             });
             _ = _client.Request<Participant>(Verb.Post, _participantsUri, classifierPostBody).Result;
 
@@ -66,7 +66,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Host = "http://bot1/dmr-api/messages",
                 Type = "Chatbot",
                 Status = "Active",
-                ApiKey = "thisisareallylongkey"
+                ApiKey = "thisisareallylongkeyformockbot1"
             });
             _ = _client.Request<Participant>(Verb.Post, _participantsUri, bot1PostBody).Result;
         }

@@ -25,6 +25,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
+      - DMRSERVICESETTINGS__CENTOPSURI=http://centops
+      - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkeyforclassifier
     networks:
       - my-network
 
@@ -38,6 +40,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
+      - DMRSERVICESETTINGS__CENTOPSURI=http://centops
+      - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkeyformockbot1
       - BOTSETTINGS__ID=bot1
     networks:
       - my-network
@@ -52,6 +56,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
+      - DMRSERVICESETTINGS__CENTOPSURI=http://centops
+      - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkeyformockbot2
       - BOTSETTINGS__ID=bot2
     networks:
       - my-network
