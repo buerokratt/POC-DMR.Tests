@@ -6,19 +6,20 @@ using Xunit.Abstractions;
 
 namespace Tests.IntegrationTests
 {
-    public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>, IDisposable
+    public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>
     {
         private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
         private readonly CentOpsFixture _fixture;
 
-        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, CentOpsFixture fixture)
+        private readonly TestClients _testClient;
+
+        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients, CentOpsFixture fixture)
         {
             _configuration = configuration;
             _output = output;
-            _client = new HttpClient();
-            _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
+            _testClient = testClients;
             _fixture = fixture;
         }
 
@@ -30,8 +31,8 @@ namespace Tests.IntegrationTests
             var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
             // Act
-            var allInstitutions = await _client.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
-            var allParticipants = await _client.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
+            var allInstitutions = await _testClient.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
+            var allParticipants = await _testClient.CentOpsAdminClient.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
             var testRunInstitution = allInstitutions.FirstOrDefault(i => i.Name == _fixture.TestInstitutionName);
             var testRunParticipants = allParticipants.Where(p => p.InstitutionId == testRunInstitution.Id).ToList();
 
@@ -56,12 +57,12 @@ namespace Tests.IntegrationTests
 
             // Act
             // 1 Create Chat
-            var createdChat = await _client.Request<Chat>(Verb.Post, chatsUri, _configuration["CentOpsApiKey"]).ConfigureAwait(false);
+            var createdChat = await _testClient.MockBotChatClient.Request<Chat>(Verb.Post, chatsUri, string.Empty).ConfigureAwait(false);
             _output.WriteLine($"createdChat.Id = {createdChat.Id}");
 
             // 2 Create Message
             var chatMessageUri = new Uri($"{_configuration["Bot1Url"]}/client-api/chats/{createdChat.Id}/messages");
-            var createdChatMessage = await _client.Request<ChatMessage>(Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
+            var createdChatMessage = await _testClient.MockBotChatClient.Request<ChatMessage>(Verb.Post, chatMessageUri, "i want to register my child at school").ConfigureAwait(false);
             _output.WriteLine($"createdChatMessage.Id = {createdChatMessage.Id}");
 
             // 3 Retry until we have 2 messages in the chat that this test created
@@ -69,7 +70,7 @@ namespace Tests.IntegrationTests
             bool breakLoop = false;
             while (!breakLoop)
             {
-                var chats = await _client.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
+                var chats = await _testClient.MockBotChatClient.Request<List<Chat>>(Verb.Get, chatsUri).ConfigureAwait(false);
                 resultChat = chats.First(c => c.Id == createdChat.Id);
                 _output.WriteLine($"resultChat.Messages.Count= {resultChat.Messages.Count}");
 
@@ -92,11 +93,6 @@ namespace Tests.IntegrationTests
             Assert.Equal("CLASSIFIER", dmrMessage.SentBy.ToUpperInvariant());
             Assert.Equal("EDUCATION", dmrMessage.Classification.ToUpperInvariant());
             Assert.Equal(createdChatMessage.Content, dmrMessage.Content);
-        }
-
-        public void Dispose()
-        {
-            _client.Dispose();
         }
     }
 }
