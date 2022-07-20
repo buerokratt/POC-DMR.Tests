@@ -12,26 +12,25 @@ namespace Tests.IntegrationTests.Fixtures
         private readonly string _testId;
         private readonly Uri _institutionsUri;
         private readonly Uri _participantsUri;
-        private readonly HttpClient _client;
+        private readonly TestClients _testClients;
 
-        public CentOpsFixture(IConfiguration configuration)
+        public CentOpsFixture(IConfiguration configuration, TestClients testClients)
         {
             // Do "global" initialization here; Only called once.
 
             // Setup
             _configuration = configuration;
             _testId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
-            _client = new HttpClient();
-            _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
             _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
             _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
+            _testClients = testClients;
 
             // Create Institution
             var institutionPostBody = JsonSerializer.Serialize(new InstitutionRequest()
             {
                 Name = $"TestInstitution{_testId}",
             });
-            var institution = _client.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
+            var institution = _testClients.CentOpsAdminClient.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
 
 
             // Create Classifier
@@ -44,7 +43,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkeyforclassifier"
             });
-            _ = _client.Request<Participant>(Verb.Post, _participantsUri, classifierPostBody).Result;
+            _ = _testClients.CentOpsAdminClient.Request<Participant>(Verb.Post, _participantsUri, classifierPostBody).Result;
 
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new Participant()
@@ -56,7 +55,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
             });
-            _ = _client.Request<Participant>(Verb.Post, _participantsUri, dmrPostBody).Result;
+            _ = _testClients.CentOpsAdminClient.Request<Participant>(Verb.Post, _participantsUri, dmrPostBody).Result;
 
             // Create Bot1
             var bot1PostBody = JsonSerializer.Serialize(new Participant()
@@ -68,7 +67,7 @@ namespace Tests.IntegrationTests.Fixtures
                 Status = "Active",
                 ApiKey = "thisisareallylongkeyformockbot1"
             });
-            _ = _client.Request<Participant>(Verb.Post, _participantsUri, bot1PostBody).Result;
+            _ = _testClients.CentOpsAdminClient.Request<Participant>(Verb.Post, _participantsUri, bot1PostBody).Result;
         }
 
         public void Dispose()
@@ -76,23 +75,20 @@ namespace Tests.IntegrationTests.Fixtures
             // Do "global" teardown here; Only called once.
 
             // Get all participant for test id
-            var participants = _client.Request<List<Participant>>(Verb.Get, _participantsUri).Result;
+            var participants = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Get, _participantsUri).Result;
 
             // Delete each participant
             foreach (var participant in participants)
             {
                 var deleteParticipantUri = new Uri($"{_participantsUri}/{participant.Id}");
-                _ = _client.Request<List<Participant>>(Verb.Delete, deleteParticipantUri).Result;
+                _ = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Delete, deleteParticipantUri).Result;
             }
 
             // Delete institution
-            var institutions = _client.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
+            var institutions = _testClients.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
             var testInstitution = institutions.FirstOrDefault(i => i.Name == $"TestInstitution{_testId}");
             var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
-            _ = _client.Request<List<Participant>>(Verb.Delete, deleteInstitutionUri).Result;
-
-            // Dispose
-            _client.Dispose();
+            _ = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Delete, deleteInstitutionUri).Result;
         }
     }
 }
