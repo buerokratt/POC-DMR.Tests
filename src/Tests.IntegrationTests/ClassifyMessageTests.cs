@@ -10,7 +10,6 @@ namespace Tests.IntegrationTests
     {
         private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
-        private readonly HttpClient _client;
         private readonly CentOpsFixture _fixture;
 
         private readonly TestClients _testClient;
