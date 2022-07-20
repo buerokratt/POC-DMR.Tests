@@ -32,12 +32,11 @@ namespace Tests.IntegrationTests
             // Act
             var allInstitutions = await _client.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
             var allParticipants = await _client.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
-            var testRunInstitutions = allInstitutions.Where(p => p.Name == $"TestInstitution{_fixture.TestId}").ToList();
-            var testRunInstitution = testRunInstitutions.Single();
-            var testRunParticipants = allParticipants.Where(i => i.InstitutionId == testRunInstitution.Id).ToList();
+            var testRunInstitution = allInstitutions.FirstOrDefault(i => i.Name == _fixture.TestInstitutionName);
+            var testRunParticipants = allParticipants.Where(p => p.InstitutionId == testRunInstitution.Id).ToList();
 
             // Assert
-            _ = Assert.Single(testRunInstitutions);
+            Assert.NotNull(testRunInstitution);
             Assert.Equal(3, testRunParticipants.Count);
             Assert.Equal(testRunParticipants[0].InstitutionId, testRunInstitution.Id);
             Assert.Equal(testRunParticipants[1].InstitutionId, testRunInstitution.Id);

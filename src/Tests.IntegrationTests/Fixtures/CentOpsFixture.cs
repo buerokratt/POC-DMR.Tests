@@ -13,7 +13,7 @@ namespace Tests.IntegrationTests.Fixtures
         private readonly Uri _participantsUri;
         private readonly HttpClient _client;
 
-        public string TestId { get; private set; }
+        public string TestInstitutionName { get; private set; }
 
         public CentOpsFixture(IConfiguration configuration)
         {
@@ -21,7 +21,7 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Setup
             _configuration = configuration;
-            TestId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+            TestInstitutionName = $"TestInstitution{DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture)}";
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
             _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
@@ -30,7 +30,7 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Institution
             var institutionPostBody = JsonSerializer.Serialize(new InstitutionRequest()
             {
-                Name = $"TestInstitution{TestId}",
+                Name = TestInstitutionName,
             });
             var institution = _client.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
 
@@ -88,7 +88,7 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Delete institution
             var institutions = _client.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
-            var testInstitution = institutions.FirstOrDefault(i => i.Name == $"TestInstitution{TestId}");
+            var testInstitution = institutions.FirstOrDefault(i => i.Name == TestInstitutionName);
             var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
             _ = _client.Request<List<Participant>>(Verb.Delete, deleteInstitutionUri).Result;
 
