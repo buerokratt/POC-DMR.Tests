@@ -41,6 +41,9 @@ namespace Tests.IntegrationTests
         [Fact(Timeout = 4 * 60 * 1000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
+            // Allow the environment to stabilise with CentOps participant configuration.
+            await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+
             _output.WriteLine($"Starting {nameof(GivenValidMessageReceivesValidResponse)}");
 
             // Arrange
