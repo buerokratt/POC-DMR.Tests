@@ -11,13 +11,15 @@ namespace Tests.IntegrationTests
         private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
+        private readonly CentOpsFixture _fixture;
 
-        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output)
+        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, CentOpsFixture fixture)
         {
             _configuration = configuration;
             _output = output;
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("x-api-key", _configuration["CentOpsApiKey"]);
+            _fixture = fixture;
         }
 
         [Fact(Timeout = 2 * 60 * 1000)]
@@ -28,14 +30,17 @@ namespace Tests.IntegrationTests
             var participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
 
             // Act
-            var participants = await _client.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
-            var institutions = await _client.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
+            var allInstitutions = await _client.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
+            var allParticipants = await _client.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
+            var testRunInstitutions = allInstitutions.Where(p => p.Name == $"TestInstitution{_fixture.TestId}").ToList();
+            var testRunInstitution = testRunInstitutions.Single();
+            var testRunParticipants = allParticipants.Where(i => i.InstitutionId == testRunInstitution.Id).ToList();
 
             // Assert
-            _ = Assert.Single(institutions);
-            Assert.Equal(3, participants.Count);
-            Assert.Equal(participants[0].InstitutionId, institutions.Single().Id);
-            Assert.Equal(participants[1].InstitutionId, institutions.Single().Id);
+            _ = Assert.Single(testRunInstitutions);
+            Assert.Equal(3, testRunParticipants.Count);
+            Assert.Equal(testRunParticipants[0].InstitutionId, testRunInstitution.Id);
+            Assert.Equal(testRunParticipants[1].InstitutionId, testRunInstitution.Id);
         }
 
         [Fact(Timeout = 4 * 60 * 1000)]
