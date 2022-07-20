@@ -8,6 +8,8 @@ namespace Tests.IntegrationTests
 
         public HttpClient MockBotChatClient { get; }
 
+        private bool _disposed;
+
         public TestClients(IConfiguration configuration)
         {
             if (configuration == null)
@@ -24,11 +26,18 @@ namespace Tests.IntegrationTests
 
         protected virtual void Dispose(bool disposing)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
                 CentOpsAdminClient.Dispose();
                 MockBotChatClient.Dispose();
             }
+
+            _disposed = true;
         }
 
         public void Dispose()
