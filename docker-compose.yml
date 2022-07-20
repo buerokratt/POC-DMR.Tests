@@ -43,6 +43,7 @@ services:
       - DMRSERVICESETTINGS__CENTOPSURI=http://centops
       - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkeyformockbot1
       - BOTSETTINGS__ID=bot1
+      - CONNECTIONSTRINGS__APIKEY=testing
     networks:
       - my-network
 
@@ -58,6 +59,7 @@ services:
       - DMRSERVICESETTINGS__DMRAPIURI=http://dmr/messages
       - DMRSERVICESETTINGS__CENTOPSURI=http://centops
       - DMRSERVICESETTINGS__CENTOPSAPIKEY=thisisareallylongkeyformockbot2
+      - CONNECTIONSTRINGS__APIKEY=testing
       - BOTSETTINGS__ID=bot2
     networks:
       - my-network

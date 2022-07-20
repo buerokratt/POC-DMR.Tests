@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Tests.IntegrationTests
@@ -17,6 +18,7 @@ namespace Tests.IntegrationTests
                 .AddEnvironmentVariables()
                 .Build();
 
+            _ = hostBuilder.ConfigureServices(services => services.AddSingleton<TestClients>());
             _ = hostBuilder.ConfigureHostConfiguration(builder => builder.AddConfiguration(config));
         }
     }
