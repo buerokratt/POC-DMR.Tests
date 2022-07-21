@@ -42,7 +42,7 @@ namespace Tests.IntegrationTests
             Assert.Equal(testRunParticipants[1].InstitutionId, testRunInstitution.Id);
         }
 
-        [Fact(Timeout = 4 * 60 * 1000)]
+        [Fact(Timeout = 2 * 60 * 1000)]
         public async Task GivenValidMessageReceivesValidResponse()
         {
             // Allow the environment to stabilise with CentOps participant configuration.
