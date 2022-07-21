@@ -21,7 +21,8 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Setup
             _configuration = configuration;
-            TestInstitutionName = $"TestInstitution{DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture)}";
+            var uniqueTestId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+            TestInstitutionName = $"TestInstitution{uniqueTestId}";
             _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
             _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
             _testClients = testClients;
@@ -30,6 +31,7 @@ namespace Tests.IntegrationTests.Fixtures
             var institutionPostBody = JsonSerializer.Serialize(new InstitutionRequest()
             {
                 Name = TestInstitutionName,
+                Status = "Active",
             });
             var institution = _testClients.CentOpsAdminClient.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
 
@@ -37,9 +39,9 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Classifier
             var classifierPostBody = JsonSerializer.Serialize(new Participant()
             {
-                Name = "classifier1",
+                Name = $"classifier1{uniqueTestId}",
                 InstitutionId = institution.Id,
-                Host = "http://classifier/dmr-api/messages",
+                Host = $"{_configuration["ClassifierUrl"]}/dmr-api/messages",
                 Type = "Classifier",
                 Status = "Active",
                 ApiKey = "thisisareallylongkeyforclassifier"
@@ -49,9 +51,9 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new Participant()
             {
-                Name = "dmr1",
+                Name = $"dmr1{uniqueTestId}",
                 InstitutionId = institution.Id,
-                Host = "http://dmr/messages",
+                Host = $"{_configuration["DmrUrl"]}/messages",
                 Type = "Dmr",
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
@@ -61,9 +63,9 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Bot1
             var bot1PostBody = JsonSerializer.Serialize(new Participant()
             {
-                Name = "bot1",
+                Name = $"bot1{uniqueTestId}",
                 InstitutionId = institution.Id,
-                Host = "http://bot1/dmr-api/messages",
+                Host = $"{_configuration["Bot1Url"]}/dmr-api/messages",
                 Type = "Chatbot",
                 Status = "Active",
                 ApiKey = "thisisareallylongkeyformockbot1"
