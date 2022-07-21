@@ -77,19 +77,22 @@ namespace Tests.IntegrationTests.Fixtures
         {
             // Do "global" teardown here; Only called once.
 
+            // Get details
+            var institutions = _testClients.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
+            var testInstitution = institutions.FirstOrDefault(i => i.Name == TestInstitutionName);
+
             // Get all participant for test id
             var participants = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Get, _participantsUri).Result;
+            var testParticipants = participants.Where(p => p.InstitutionId == testInstitution.Id);
 
             // Delete each participant
-            foreach (var participant in participants)
+            foreach (var testParticipant in testParticipants)
             {
-                var deleteParticipantUri = new Uri($"{_participantsUri}/{participant.Id}");
-                _ = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Delete, deleteParticipantUri).Result;
+                var deleteTestParticipantUri = new Uri($"{_participantsUri}/{testParticipant.Id}");
+                _ = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Delete, deleteTestParticipantUri).Result;
             }
 
             // Delete institution
-            var institutions = _testClients.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
-            var testInstitution = institutions.FirstOrDefault(i => i.Name == TestInstitutionName);
             var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
             _ = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Delete, deleteInstitutionUri).Result;
         }
