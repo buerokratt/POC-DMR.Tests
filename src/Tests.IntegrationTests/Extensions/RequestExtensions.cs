@@ -16,17 +16,27 @@ namespace Tests.IntegrationTests.Extensions
         /// <param name="uri">The Uri to send the request to</param>
         /// <returns>Object representing deserialised result of type defined by T</returns>
         /// <exception cref="NotImplementedException">If verb is not in expected range.</exception>
-        public static async Task<TResponse> Request<TResponse>(this HttpClient httpClient, Verb verb, Uri uri, string body = "")
+        public static async Task<TResponse> Request<TResponse>(this HttpClient httpClient, Verb verb, Uri uri, string body = "", IDictionary<string, string> headers = null)
         {
             if (httpClient == null)
             {
                 throw new ArgumentNullException(nameof(httpClient));
             }
 
+            if (headers == null)
+            {
+                headers = new Dictionary<string, string>();
+            }
+
             // Build content
             using var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            // make request
+            foreach ((var header, var value) in headers)
+            {
+                content.Headers.Add(header, value);
+            }
+
+            // Make request
             var response = verb switch
             {
                 Verb.Post => await httpClient.PostAsync(uri, content).ConfigureAwait(false),
