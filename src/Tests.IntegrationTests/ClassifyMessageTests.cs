@@ -1,29 +1,33 @@
 using Microsoft.Extensions.Configuration;
-//using Tests.IntegrationTests.Fixtures;
+using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
 using Tests.IntegrationTests.Extensions;
 using Xunit.Abstractions;
+using System.Globalization;
 
 namespace Tests.IntegrationTests
 {
-    //public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>
-    public sealed class ClassifyMessageTests
+    public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>
     {
         private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
-        //private readonly CentOpsFixture _fixture;
         private readonly string _testInstitutionName;
 
         private readonly TestClients _testClient;
 
-        //public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients, CentOpsFixture fixture)
-        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients)
+        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients, CentOpsFixture fixture)
         {
             _configuration = configuration;
             _output = output;
             _testClient = testClients;
-            //_fixture = fixture;
-            _testInstitutionName = "mock-institution";
+
+            if (fixture == null)
+            {
+                throw new ArgumentNullException(nameof(fixture));
+            }
+
+            var useFixture = Convert.ToBoolean(_configuration["UseFixture"], CultureInfo.CurrentCulture);
+            _testInstitutionName = useFixture ? fixture.TestInstitutionName : "mock-institution";
         }
 
         [Fact(Timeout = 2 * 60 * 1000)]
