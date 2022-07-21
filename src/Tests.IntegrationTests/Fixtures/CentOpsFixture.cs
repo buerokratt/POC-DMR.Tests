@@ -39,9 +39,9 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Classifier
             var classifierPostBody = JsonSerializer.Serialize(new Participant()
             {
-                Name = $"classifier1{uniqueTestId}",
+                Name = $"classifier1",
                 InstitutionId = institution.Id,
-                Host = $"{_configuration["ClassifierUrl"]}/dmr-api/messages",
+                Host = $"{_configuration["ClassifierInternalUrl"]}/dmr-api/messages",
                 Type = "Classifier",
                 Status = "Active",
                 ApiKey = "thisisareallylongkeyforclassifier"
@@ -51,9 +51,9 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Dmr
             var dmrPostBody = JsonSerializer.Serialize(new Participant()
             {
-                Name = $"dmr1{uniqueTestId}",
+                Name = $"dmr1",
                 InstitutionId = institution.Id,
-                Host = $"{_configuration["DmrUrl"]}/messages",
+                Host = $"{_configuration["DmrInternalUrl"]}/messages",
                 Type = "Dmr",
                 Status = "Active",
                 ApiKey = "thisisareallylongkey"
@@ -63,9 +63,9 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Bot1
             var bot1PostBody = JsonSerializer.Serialize(new Participant()
             {
-                Name = $"bot1{uniqueTestId}",
+                Name = $"bot1",
                 InstitutionId = institution.Id,
-                Host = $"{_configuration["Bot1Url"]}/dmr-api/messages",
+                Host = $"{_configuration["Bot1InternalUrl"]}/dmr-api/messages",
                 Type = "Chatbot",
                 Status = "Active",
                 ApiKey = "thisisareallylongkeyformockbot1"
