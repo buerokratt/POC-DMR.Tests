@@ -1,25 +1,29 @@
 using Microsoft.Extensions.Configuration;
-using Tests.IntegrationTests.Fixtures;
+//using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
 using Tests.IntegrationTests.Extensions;
 using Xunit.Abstractions;
 
 namespace Tests.IntegrationTests
 {
-    public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>
+    //public sealed class ClassifyMessageTests : IClassFixture<CentOpsFixture>
+    public sealed class ClassifyMessageTests
     {
         private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
-        private readonly CentOpsFixture _fixture;
+        //private readonly CentOpsFixture _fixture;
+        private readonly string _testInstitutionName;
 
         private readonly TestClients _testClient;
 
-        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients, CentOpsFixture fixture)
+        //public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients, CentOpsFixture fixture)
+        public ClassifyMessageTests(IConfiguration configuration, ITestOutputHelper output, TestClients testClients)
         {
             _configuration = configuration;
             _output = output;
             _testClient = testClients;
-            _fixture = fixture;
+            //_fixture = fixture;
+            _testInstitutionName = "mock-institution";
         }
 
         [Fact(Timeout = 2 * 60 * 1000)]
@@ -32,7 +36,7 @@ namespace Tests.IntegrationTests
             // Act
             var allInstitutions = await _testClient.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
             var allParticipants = await _testClient.CentOpsAdminClient.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
-            var testRunInstitution = allInstitutions.FirstOrDefault(i => i.Name == _fixture.TestInstitutionName);
+            var testRunInstitution = allInstitutions.FirstOrDefault(i => i.Name == _testInstitutionName);
             var testRunParticipants = allParticipants.Where(p => p.InstitutionId == testRunInstitution.Id).ToList();
 
             // Assert
