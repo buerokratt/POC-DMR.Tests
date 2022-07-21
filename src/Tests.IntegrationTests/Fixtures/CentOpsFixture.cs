@@ -9,10 +9,11 @@ namespace Tests.IntegrationTests.Fixtures
     public sealed class CentOpsFixture : IDisposable
     {
         private readonly IConfiguration _configuration;
-        private readonly string _testId;
         private readonly Uri _institutionsUri;
         private readonly Uri _participantsUri;
         private readonly TestClients _testClients;
+
+        public string TestInstitutionName { get; private set; }
 
         public CentOpsFixture(IConfiguration configuration, TestClients testClients)
         {
@@ -20,7 +21,7 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Setup
             _configuration = configuration;
-            _testId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+            TestInstitutionName = $"TestInstitution{DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture)}";
             _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
             _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
             _testClients = testClients;
@@ -28,7 +29,7 @@ namespace Tests.IntegrationTests.Fixtures
             // Create Institution
             var institutionPostBody = JsonSerializer.Serialize(new InstitutionRequest()
             {
-                Name = $"TestInstitution{_testId}",
+                Name = TestInstitutionName,
             });
             var institution = _testClients.CentOpsAdminClient.Request<Institution>(Verb.Post, _institutionsUri, institutionPostBody).Result;
 
@@ -86,7 +87,7 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Delete institution
             var institutions = _testClients.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
-            var testInstitution = institutions.FirstOrDefault(i => i.Name == $"TestInstitution{_testId}");
+            var testInstitution = institutions.FirstOrDefault(i => i.Name == TestInstitutionName);
             var deleteInstitutionUri = new Uri($"{_institutionsUri}/{testInstitution.Id}");
             _ = _testClients.CentOpsAdminClient.Request<List<Participant>>(Verb.Delete, deleteInstitutionUri).Result;
         }
