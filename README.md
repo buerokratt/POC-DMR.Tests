@@ -32,7 +32,7 @@ When running tests locally, you will use Docker Desktop.
 
 ### 4 Docker Network Bridge
 
-In order to run the various services in containers concurrently, you will use Docker Compose. In order for the containers to be able to communicate with each other, you will create a Docker network bridge.
+In order to run the various services in containers concurrently, you will use Docker Compose. In order for the containers to be able to communicate with each other, you will need to create a Docker network bridge.
 
 1. Open a terminal and navigating to `[working folder]`
 2. Execute `docker network create -d bridge my-network`
@@ -60,7 +60,7 @@ You may want to run this test against deployed component in Azure. This can be u
 
 In order to do this follow steps 1 and 2 from Running tests locally with Docker Compose and then follow these steps:
 
-### Configure secrets.json
+### 1 Configure secrets.json
 
 In order to target a deployed set of resources, the settings in `appsettings.json` need to be over-written with values that corespond to the deployed components. It is not good practice to edit `appsettings.json` because that file is under source control and you may inadvertently commit secrets to Git. Instead you can use .net user secrets to create a local secrets.json which over-rides the settings in `appsettings.json`. See https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0
 
@@ -69,7 +69,7 @@ In order to target a deployed set of resources, the settings in `appsettings.jso
 3. Manually add equivilent secrets from the Azure-hosted components for each key/value pair in `[working folder]/Tests/src/Tests.IntegrationTests/appsettings.json` using this command `dotnet user-secrets set "setting key" "setting value"`
    1. As an alternative, you can open `secrets.json` for this project in a text editor and add the secrets that way. By default, `secrets.json` will be located in `%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json` for Windows or `~/.microsoft/usersecrets/<user_secrets_id>/secrets.json` for Linux/Mac. You can find the value of `<user_secrets_id>` by opening the `[working folder]/Tests/src/Tests.IntegrationTests/Tests.IntegrationTests.csproj` in a text editor.
 
-### Run Test
+### 2 Run Test
 
 You can run the test in a terminal or Visual Studio. These steps are for a terminal but you can get a more detailed view by running the tests in test Explorer in Visual Studio.
 
