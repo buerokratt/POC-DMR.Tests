@@ -12,7 +12,7 @@ namespace Tests.IntegrationTests.Fixtures
         private readonly Uri _institutionsUri;
         private readonly Uri _participantsUri;
         private readonly TestClients _testClients;
-        private readonly bool _useFixture;
+        private readonly bool _generateTestData;
 
         public string TestInstitutionName { get; private set; }
 
@@ -22,9 +22,9 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Setup
             _configuration = configuration;
-            _useFixture = Convert.ToBoolean(_configuration["UseFixture"], CultureInfo.InvariantCulture);
+            _generateTestData = Convert.ToBoolean(_configuration["GenerateTestData"], CultureInfo.InvariantCulture);
 
-            if (_useFixture)
+            if (_generateTestData)
             {
                 var uniqueTestId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
                 TestInstitutionName = $"TestInstitution{uniqueTestId}";
@@ -87,7 +87,7 @@ namespace Tests.IntegrationTests.Fixtures
         {
             // Do "global" teardown here; Only called once.
 
-            if (_useFixture)
+            if (_generateTestData)
             {
                 // Get details
                 var institutions = _testClients.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, _institutionsUri).Result;
