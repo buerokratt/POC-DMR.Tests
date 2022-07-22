@@ -62,7 +62,7 @@ In order to do this follow steps 1 and 2 from Running tests locally with Docker 
 
 ### 1 Configure secrets.json
 
-In order to target a deployed set of resources, the settings in `appsettings.json` need to be over-written with values that corespond to the deployed components. It is not good practice to edit `appsettings.json` because that file is under source control and you may inadvertently commit secrets to Git. Instead you can use .net user secrets to create a local secrets.json which over-rides the settings in `appsettings.json`. See https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0
+In order to target a deployed set of resources, the settings in `appsettings.json` need to be over-written with values that correspond to the deployed components. It is not good practice to edit `appsettings.json` because that file is under source control and you may inadvertently commit secrets to Git. Instead you can use .net user secrets to create a local secrets.json which over-rides the settings in `appsettings.json`. See https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0
 
 1. Open a terminal and navigate to `[working folder]/Tests/src/`
 2. Execute `dotnet user-secrets init`
