@@ -24,7 +24,11 @@ namespace Tests.IntegrationTests.Fixtures
             _configuration = configuration;
             _generateTestData = Convert.ToBoolean(_configuration["GenerateTestData"], CultureInfo.InvariantCulture);
 
-            if (_generateTestData)
+            if (!_generateTestData)
+            {
+                TestInstitutionName = "mock-institution";
+            }
+            else
             {
                 var uniqueTestId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
                 TestInstitutionName = $"TestInstitution{uniqueTestId}";
@@ -76,10 +80,6 @@ namespace Tests.IntegrationTests.Fixtures
                     ApiKey = "thisisareallylongkeyformockbot1"
                 });
                 _ = _testClients.CentOpsAdminClient.Request<Participant>(Verb.Post, _participantsUri, bot1PostBody).Result;
-            }
-            else
-            {
-                TestInstitutionName = "mock-institution";
             }
         }
 
