@@ -66,7 +66,7 @@ In order to target a deployed set of resources, the settings in `appsettings.jso
 
 1. Open a terminal and navigate to `[working folder]/Tests/src/`
 2. Execute `dotnet user-secrets init`
-3. Manually add equivilent secrets from the Azure-hosted components for each key/value pair in `[working folder]/Tests/src/Tests.IntegrationTests/appsettings.json` using this command `dotnet user-secrets set "setting key" "setting value"`
+3. Manually add equivalent secrets from the Azure-hosted components for each key/value pair in `[working folder]/Tests/src/Tests.IntegrationTests/appsettings.json` using this command `dotnet user-secrets set "setting key" "setting value"`
    1. As an alternative, you can open `secrets.json` for this project in a text editor and add the secrets that way. By default, `secrets.json` will be located in `%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json` for Windows or `~/.microsoft/usersecrets/<user_secrets_id>/secrets.json` for Linux/Mac. You can find the value of `<user_secrets_id>` by opening the `[working folder]/Tests/src/Tests.IntegrationTests/Tests.IntegrationTests.csproj` in a text editor.
 
 ### 2 Run Test
