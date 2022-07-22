@@ -78,3 +78,17 @@ You can run the test in a terminal or Visual Studio. These steps are for a termi
 1. Open a terminal and navigate to `[working folder]/Tests/src/`
 2. Execute `dotnet test`
 3. If successful, you will see that 2 tests from "Tests.IntegrationTests.dll" has "Passed!" in the terminal.
+
+## Application settings
+
+The test requires settings in order to operate. These will either come from  `appsettings.json` file or from `secrets.json` (see Configure secrets.json). In both cases, the setting names are the same.
+
+- `Bot1Url` The external endpoint for the main Bot used in the test. 
+- `Bot1ApiKey` The API key used to call the Bot endpoint. Obtain from KeyVault for Azure.
+- `CentOpsUrl` The external endpoint for CentOps used in the test.
+- `CentOpsApiKey` The API key used to call the CentOps endpoint. Obtain from KeyVault for Azure.
+- `ClassifierInternalUrl` The internal URI for Classifier. For Docker Compose, this can be obtained from `[working folder]/Tests/docker-compose.yml`. For Azure, look in the Azure Kubernetes Service settings.
+- `DmrInternalUrl` The internal URL for DMR. For Docker Compose, this can be obtained from `[working folder]/Tests/docker-compose.yml`. For Azure, look in the Azure Kubernetes Service settings.
+- `Bot1InternalUrl` The internal URL for the main Bot. For Docker Compose, this can be obtained from `[working folder]/Tests/docker-compose.yml`. For Azure, look in the Azure Kubernetes Service settings.
+- `GenerateTestData` Boolean value used to control whether test data is created in the test fixture or not. Usually set to `true` when using Docker Compose but `false` when using Azure because Azure will already have data via the CD process.
+
