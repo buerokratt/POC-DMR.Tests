@@ -56,7 +56,7 @@ You can run the test in a terminal or Visual Studio. These steps are for a termi
 
 ## Running tests locally against Azure hosted environment
 
-You may want to run this test against deployed component in Azure. This can be usefull to make sure that the deployed components have the correct settings and can communicate correctly.
+You may want to run this test against deployed component in Azure. This can be useful to make sure that the deployed components have the correct settings and can communicate correctly.
 
 In order to do this follow steps 1 and 2 from Running tests locally with Docker Compose and then follow these steps:
 
