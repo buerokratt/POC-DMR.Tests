@@ -22,11 +22,11 @@ namespace Tests.IntegrationTests.Fixtures
 
             // Setup
             _configuration = configuration;
-            _useFixture = Convert.ToBoolean(_configuration["UseFixture"], CultureInfo.CurrentCulture);
+            _useFixture = Convert.ToBoolean(_configuration["UseFixture"], CultureInfo.InvariantCulture);
 
             if (_useFixture)
             {
-                var uniqueTestId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+                var uniqueTestId = DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
                 TestInstitutionName = $"TestInstitution{uniqueTestId}";
                 _institutionsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/institutions");
                 _participantsUri = new Uri($"{_configuration["CentOpsUrl"]}/admin/participants");
