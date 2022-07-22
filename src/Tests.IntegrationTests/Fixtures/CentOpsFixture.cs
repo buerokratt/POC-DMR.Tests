@@ -77,6 +77,10 @@ namespace Tests.IntegrationTests.Fixtures
                 });
                 _ = _testClients.CentOpsAdminClient.Request<Participant>(Verb.Post, _participantsUri, bot1PostBody).Result;
             }
+            else
+            {
+                TestInstitutionName = "mock-institution";
+            }
         }
 
         public void Dispose()

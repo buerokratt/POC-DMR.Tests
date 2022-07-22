@@ -3,7 +3,6 @@ using Tests.IntegrationTests.Fixtures;
 using Tests.IntegrationTests.Models;
 using Tests.IntegrationTests.Extensions;
 using Xunit.Abstractions;
-using System.Globalization;
 
 namespace Tests.IntegrationTests
 {
@@ -11,7 +10,7 @@ namespace Tests.IntegrationTests
     {
         private readonly ITestOutputHelper _output;
         private readonly IConfiguration _configuration;
-        private readonly string _testInstitutionName;
+        private readonly CentOpsFixture _fixture;
 
         private readonly TestClients _testClient;
 
@@ -20,14 +19,7 @@ namespace Tests.IntegrationTests
             _configuration = configuration;
             _output = output;
             _testClient = testClients;
-
-            if (fixture == null)
-            {
-                throw new ArgumentNullException(nameof(fixture));
-            }
-
-            var useFixture = Convert.ToBoolean(_configuration["UseFixture"], CultureInfo.CurrentCulture);
-            _testInstitutionName = useFixture ? fixture.TestInstitutionName : "mock-institution";
+            _fixture = fixture;
         }
 
         [Fact(Timeout = 2 * 60 * 1000)]
@@ -40,7 +32,7 @@ namespace Tests.IntegrationTests
             // Act
             var allInstitutions = await _testClient.CentOpsAdminClient.Request<List<Institution>>(Verb.Get, institutionsUri).ConfigureAwait(false);
             var allParticipants = await _testClient.CentOpsAdminClient.Request<List<Participant>>(Verb.Get, participantsUri).ConfigureAwait(false);
-            var testRunInstitution = allInstitutions.FirstOrDefault(i => i.Name == _testInstitutionName);
+            var testRunInstitution = allInstitutions.FirstOrDefault(i => i.Name == _fixture.TestInstitutionName);
             var testRunParticipants = allParticipants.Where(p => p.InstitutionId == testRunInstitution.Id).ToList();
 
             // Assert
