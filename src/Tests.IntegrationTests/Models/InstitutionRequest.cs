@@ -6,6 +6,9 @@ namespace Tests.IntegrationTests.Models
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
     }
 }
 

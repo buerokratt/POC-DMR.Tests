@@ -10,6 +10,7 @@
     <AnalysisLevel>latest-All</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <UserSecretsId>77cd5319-5e32-4e69-92f7-b38be27818d0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,11 +34,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Fixtures\" />
     <None Remove="Extensions\" />
+    <None Remove="Microsoft.Extensions.Configuration.UserSecrets" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">

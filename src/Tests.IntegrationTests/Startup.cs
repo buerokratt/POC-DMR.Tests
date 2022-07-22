@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,8 +15,9 @@ namespace Tests.IntegrationTests
             }
 
             var config = new ConfigurationBuilder()
-                .AddJsonFile(@"appsettings.json", false, false)
+                .AddJsonFile(@"appsettings.json", false, true)
                 .AddEnvironmentVariables()
+                .AddUserSecrets(Assembly.GetExecutingAssembly())
                 .Build();
 
             _ = hostBuilder.ConfigureServices(services => services.AddSingleton<TestClients>());
